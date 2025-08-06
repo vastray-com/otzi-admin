@@ -1,4 +1,4 @@
-import { Avatar, Layout, Menu, Select } from 'antd';
+import { Avatar, Layout, Menu } from 'antd';
 import { type FC, useCallback } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router';
 import { getMenuStatus, menuItems } from '@/router/privateRoutes';
@@ -29,13 +29,13 @@ export const PageLayout: FC = () => {
               alt=""
               className="h-full aspect-ratio-square"
             />
-            <h1 className="text-white text-[20px] font-bold">伟世 AI</h1>
+            <h1 className="text-white text-[20px] font-bold">诊间 AI 助手</h1>
           </div>
-          <Select
-            className="w-[128px]"
-            options={[{ value: 'changzhouyiyuan', label: '常州一院' }]}
-            defaultValue="changzhouyiyuan"
-          />
+          {/*<Select*/}
+          {/*  className="w-[128px]"*/}
+          {/*  options={[{ value: 'changzhouyiyuan', label: '常州一院' }]}*/}
+          {/*  defaultValue="changzhouyiyuan"*/}
+          {/*/>*/}
         </div>
 
         <div onClick={logout} className="cursor-pointer">

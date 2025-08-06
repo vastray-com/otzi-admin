@@ -6,7 +6,7 @@ export const useApi = () => {
     () => ({
       getRecordList: (params: Record.GetListParams) =>
         service.post('/note/list', params) as Promise<
-          APIRes<PaginationData<Record.List>>
+          APIRes<PaginationData<Record.Item>>
         >,
     }),
     [],

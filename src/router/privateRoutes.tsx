@@ -40,12 +40,12 @@ const privateBaseRoutes: BaseRoute = [
       }
       return null;
     },
-    icon: <i className="i-icon-park-outline:command" />,
+    icon: <i className="i-icon-park-outline:file-search-one" />,
     children: [
       {
         key: '/record_generation_history/list',
         element: <RecordListLazy />,
-        label: '记录列表',
+        label: '病历记录',
         addToMenu: true,
       },
     ],

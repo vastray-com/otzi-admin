@@ -1,9 +1,10 @@
 declare namespace Record {
-  type GetListParams = PaginationParams & {
+  type ListFilter = {
     record_id?: string;
     start_date?: string;
     end_date?: string;
   };
+  type GetListParams = PaginationParams & ListFilter;
 
   type Item = {
     id: {
