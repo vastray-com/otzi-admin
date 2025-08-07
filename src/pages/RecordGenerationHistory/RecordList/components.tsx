@@ -57,6 +57,7 @@ const RecordList: FC<ListProps> = ({
         <Pagination
           align="center"
           showLessItems
+          showSizeChanger={false}
           className="mt-[24px]"
           current={pagination.page}
           pageSize={pagination.page_size}
@@ -75,22 +76,42 @@ const RecordMessage: FC<{ data?: Record.Item | null }> = ({ data }) => {
   return (
     <div>
       <ul>
-        {data.sentences.map((sentence) => (
-          <li
-            key={sentence.begin_time + sentence.role_id}
-            className="mb-[20px]"
-          >
-            <p>
-              <span className="fg-primary">{sentence.role_id}</span>
-              <span className="ml-[12px] fg-tertiary">
-                {formatSecondsToTime(sentence.begin_time)}
-              </span>
-            </p>
-            <p className="inline-block text-[16px] fg-primary p-[12px] bg-[#f6f6f6] rounded-[8px] mt-[4px]">
-              {sentence.content}
-            </p>
-          </li>
-        ))}
+        {data.sentences.map(
+          (sentence) =>
+            sentence.content && (
+              <li
+                key={sentence.begin_time + sentence.role_id}
+                className="mb-[20px] flex items-start gap-x-[12px]"
+              >
+                <div>
+                  {sentence.role_id === '医生' ? (
+                    <img
+                      src="/doctor.svg"
+                      alt=""
+                      className="h-full aspect-ratio-square"
+                    />
+                  ) : (
+                    <img
+                      src="/patient.svg"
+                      alt=""
+                      className="h-full aspect-ratio-square"
+                    />
+                  )}
+                </div>
+                <div>
+                  <p>
+                    <span className="fg-primary">{sentence.role_id}</span>
+                    <span className="ml-[12px] fg-tertiary">
+                      {formatSecondsToTime(sentence.begin_time)}
+                    </span>
+                  </p>
+                  <p className="inline-block text-[16px] fg-primary p-[12px] bg-[#f6f6f6] rounded-[8px] mt-[4px]">
+                    {sentence.content}
+                  </p>
+                </div>
+              </li>
+            ),
+        )}
       </ul>
     </div>
   );

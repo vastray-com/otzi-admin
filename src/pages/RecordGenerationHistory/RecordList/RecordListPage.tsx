@@ -183,7 +183,7 @@ const RecordListPage = () => {
       </Card>
 
       <div className="flex item-center gap-x-[16px] mt-[16px] overflow-auto w-full h-[calc(100%_-_80px_-_16px)]">
-        <div className="p-[12px] bg-white rounded-lg shrink-0 grow-0 w-[300px] h-full overflow-auto">
+        <div className="p-[12px] bg-white rounded-lg shrink-0 grow-0 w-[360px] h-full overflow-auto">
           <RecordListPageCom.RecordList
             list={data}
             selectedId={current?.record_id}
