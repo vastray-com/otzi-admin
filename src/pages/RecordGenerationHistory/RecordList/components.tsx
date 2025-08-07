@@ -1,4 +1,4 @@
-import { Divider, Empty, Pagination } from 'antd';
+import { Divider, Empty, Pagination, Typography } from 'antd';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
 import { formatSecondsToTime, parseAIInsightContent } from '@/utils/helper';
@@ -38,7 +38,9 @@ const RecordList: FC<ListProps> = ({
             )}
             onClick={() => onSelectChange(item)}
           >
-            <p className="fg-primary">{`病案号：${item.record_id}`}</p>
+            <Typography.Text ellipsis className="fg-primary">
+              {`病案号：${item.record_id}`}
+            </Typography.Text>
             <p
               className={clsx(
                 selectedId === item.record_id ? 'fg-primary' : 'fg-tertiary',
@@ -55,8 +57,8 @@ const RecordList: FC<ListProps> = ({
 
       <div className="w-[calc(100%_-_48px)] mx-auto">
         <Pagination
+          simple
           align="center"
-          showLessItems
           showSizeChanger={false}
           className="mt-[24px]"
           current={pagination.page}
