@@ -26,6 +26,7 @@ declare namespace Record {
       words: string[];
     }[];
     medical_record: string;
+    revised_mr: string | null;
     channels: 1 | 2;
     created_at: string;
   };

@@ -7,6 +7,7 @@ import {
   type FormProps,
   type GetProps,
   Input,
+  Tabs,
 } from 'antd';
 import dayjs, { type Dayjs } from 'dayjs';
 import { useCallback, useRef, useState } from 'react';
@@ -38,6 +39,7 @@ const RecordListPage = () => {
 
   const [data, setData] = useState<Record.List>([]);
   const [current, setCurrent] = useState<Record.Item | null>(null);
+  const [activeKey, setActiveKey] = useState<string>('result');
 
   // 上次查询的过滤条件，用来 diff，没有变化时不重新拉取数据
   const lastFilter = useRef<Filter>(initialFilter);
@@ -187,7 +189,10 @@ const RecordListPage = () => {
           <RecordListPageCom.RecordList
             list={data}
             selectedId={current?.record_id}
-            onSelectChange={setCurrent}
+            onSelectChange={(c) => {
+              setCurrent(c);
+              setActiveKey('result');
+            }}
             pagination={pagination}
             onPaginationChange={onPaginationChange}
             total={total}
@@ -200,12 +205,37 @@ const RecordListPage = () => {
             <RecordListPageCom.RecordMessage data={current} />
           </div>
         </div>
-        <div className="p-[12px] bg-white rounded-lg flex-1 h-full">
-          <h2 className="text-[18px] font-medium">生成病历</h2>
-          <Divider style={{ marginTop: 12, marginBottom: 12 }} />
-          <div className="h-[calc(100%_-_64px)] overflow-auto">
-            <RecordListPageCom.RecordGenerationResult data={current} />
-          </div>
+        <div className="px-[12px] bg-white rounded-lg flex-1 h-full overflow-auto">
+          <Tabs
+            activeKey={activeKey}
+            onChange={setActiveKey}
+            tabBarStyle={{
+              position: 'sticky',
+              top: 0,
+              background: '#fff',
+              padding: '8px 0 0 0',
+              zIndex: '100',
+            }}
+            items={[
+              {
+                key: 'result',
+                label: '生成病历',
+                children: (
+                  <RecordListPageCom.RecordGenerationResult data={current} />
+                ),
+              },
+              {
+                disabled: !current?.revised_mr,
+                key: 'revised_mr',
+                label: '修改后病历',
+                children: (
+                  <p className="whitespace-pre-wrap leading-loose">
+                    {current?.revised_mr}
+                  </p>
+                ),
+              },
+            ]}
+          />
         </div>
       </div>
     </ContentLayout>
