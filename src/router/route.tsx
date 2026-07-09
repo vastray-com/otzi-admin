@@ -29,7 +29,7 @@ const publicRoutes: RouteObject[] = [
 // 鉴权 Loader
 const authLoader: LoaderFunction = async ({ request }) => {
   const url = new URL(request.url);
-  if (url.pathname === '/') {
+  if (url.pathname === import.meta.env.BASE_URL) {
     return redirect(DEFAULT_PUBLIC_PATH);
   }
 
@@ -46,26 +46,31 @@ const authLoader: LoaderFunction = async ({ request }) => {
 
 // 创建路由
 export const createRoutes = () =>
-  createBrowserRouter([
+  createBrowserRouter(
+    [
+      {
+        path: '/',
+        element: <Outlet />,
+        loader: authLoader,
+        children: [
+          {
+            path: '/',
+            element: <Outlet />,
+            children: publicRoutes,
+          },
+          {
+            path: '/',
+            element: <PageLayout />,
+            children: privateRoutes,
+          },
+        ],
+      },
+      {
+        path: '*',
+        element: <div>404 Not Found</div>,
+      },
+    ],
     {
-      path: '/',
-      element: <Outlet />,
-      loader: authLoader,
-      children: [
-        {
-          path: '/',
-          element: <Outlet />,
-          children: publicRoutes,
-        },
-        {
-          path: '/',
-          element: <PageLayout />,
-          children: privateRoutes,
-        },
-      ],
+      basename: import.meta.env.VITE_BASE ?? '/',
     },
-    {
-      path: '*',
-      element: <div>404 Not Found</div>,
-    },
-  ]);
+  );

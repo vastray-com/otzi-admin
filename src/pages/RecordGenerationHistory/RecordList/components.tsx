@@ -88,13 +88,13 @@ const RecordMessage: FC<{ data?: Record.Item | null }> = ({ data }) => {
                 <div>
                   {sentence.role_id === '医生' ? (
                     <img
-                      src="/doctor.svg"
+                      src={`${import.meta.env.VITE_BASE ? `${import.meta.env.VITE_BASE}/` : '/'}doctor.svg`}
                       alt=""
                       className="h-full aspect-ratio-square"
                     />
                   ) : (
                     <img
-                      src="/patient.svg"
+                      src={`${import.meta.env.VITE_BASE ? `${import.meta.env.VITE_BASE}/` : '/'}patient.svg`}
                       alt=""
                       className="h-full aspect-ratio-square"
                     />
