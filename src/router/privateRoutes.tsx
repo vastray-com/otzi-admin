@@ -6,6 +6,9 @@ import type { LoaderFunction } from 'react-router-dom';
 const RecordListLazy = lazy(
   () => import('@/pages/RecordGenerationHistory/RecordList/RecordListPage'),
 );
+const DataDashboardLazy = lazy(
+  () => import('@/pages/DataDashboard/DataDashboardPage'),
+);
 
 type BaseRoute = {
   key: string;
@@ -28,6 +31,13 @@ export const DEFAULT_PRIVATE_PATH = '/record_generation_history/list';
 
 // 需要鉴权的路由
 const privateBaseRoutes: BaseRoute = [
+  {
+    key: '/dashboard',
+    element: <DataDashboardLazy />,
+    label: '数据看板',
+    addToMenu: true,
+    icon: <i className="i-icon-park-outline:data-screen" />,
+  },
   {
     key: '/record_generation_history',
     element: <Outlet />,
