@@ -25,7 +25,7 @@ export const PageLayout: FC = () => {
         <div className="flex items-center gap-x-[36px]">
           <div className="h-[28px] flex items-center gap-x-[12px]">
             <img
-              src="/ws_logo.svg"
+              src={`${import.meta.env.VITE_BASE}/ws_logo.svg`}
               alt=""
               className="h-full aspect-ratio-square"
             />
