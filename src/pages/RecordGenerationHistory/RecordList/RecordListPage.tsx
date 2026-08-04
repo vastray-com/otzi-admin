@@ -28,6 +28,37 @@ const initialPagination = {
   page_size: 10,
 };
 
+const getCaptionTrackSource = (recordingTranscribe?: string | null) => {
+  const content = recordingTranscribe?.trim() ?? '';
+  const vtt = content
+    ? `WEBVTT\n\n00:00:00.000 --> 99:59:59.000\n${content}\n`
+    : 'WEBVTT\n\n';
+  return `data:text/vtt;charset=utf-8,${encodeURIComponent(vtt)}`;
+};
+
+const getApiHostOrigin = () => {
+  const apiUrl = import.meta.env.VITE_API_URL?.trim();
+  if (typeof window === 'undefined') return '';
+  if (!apiUrl) return window.location.origin;
+
+  if (!/^https?:\/\//i.test(apiUrl)) return window.location.origin;
+
+  try {
+    return new URL(apiUrl).origin;
+  } catch {
+    return window.location.origin;
+  }
+};
+
+const withConfiguredHost = (path?: string | null) => {
+  if (!path) return null;
+  if (/^https?:\/\//i.test(path)) return path;
+  if (typeof window === 'undefined') return path;
+
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  return `${getApiHostOrigin()}${normalizedPath}`;
+};
+
 const RecordListPage = () => {
   const { recordApi } = useApi();
 
@@ -40,6 +71,9 @@ const RecordListPage = () => {
   const [data, setData] = useState<Record.List>([]);
   const [current, setCurrent] = useState<Record.Item | null>(null);
   const [activeKey, setActiveKey] = useState<string>('result');
+  const firstRecordingFile = withConfiguredHost(
+    current?.recording_file?.[0] ?? null,
+  );
 
   // 上次查询的过滤条件，用来 diff，没有变化时不重新拉取数据
   const lastFilter = useRef<Filter>(initialFilter);
@@ -188,7 +222,7 @@ const RecordListPage = () => {
         <div className="p-[12px] bg-white rounded-lg shrink-0 grow-0 w-[280px] h-full overflow-auto">
           <RecordListPageCom.RecordList
             list={data}
-            selectedId={current?.record_id}
+            selectedId={current?.id.id.String}
             onSelectChange={(c) => {
               setCurrent(c);
               setActiveKey('result');
@@ -200,6 +234,23 @@ const RecordListPage = () => {
         </div>
         <div className="p-[12px] bg-white rounded-lg flex-1 h-full">
           <h2 className="text-[18px] font-medium">录音记录</h2>
+          <div className="mt-[12px] p-[12px] rounded-[8px] bg-[#f8f8f8]">
+            <p className="text-[14px] fg-tertiary mb-[8px]">原始音频</p>
+            {firstRecordingFile ? (
+              <audio controls src={firstRecordingFile} className="w-full">
+                <track
+                  default
+                  kind="captions"
+                  src={getCaptionTrackSource(current?.recording_transcribe)}
+                  srcLang="zh"
+                  label="自动字幕"
+                />
+                您的浏览器不支持音频播放
+              </audio>
+            ) : (
+              <p className="text-[14px] fg-tertiary">暂无原始音频</p>
+            )}
+          </div>
           <Divider style={{ marginTop: 12, marginBottom: 12 }} />
           <div className="h-[calc(100%_-_64px)] overflow-auto">
             <RecordListPageCom.RecordMessage data={current} />

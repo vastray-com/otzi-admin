@@ -29,9 +29,9 @@ const RecordList: FC<ListProps> = ({
       <ul>
         {list.map((item) => (
           <li
-            key={item.record_id}
+            key={item.record_id + item.id.id.String}
             className={clsx(
-              selectedId === item.record_id
+              selectedId === item.id.id.String
                 ? 'bg-[#e6f7ff]'
                 : 'hover:bg-[#f4f4f4]',
               'text-[16px] rounded-[6px] px-[12px] py-[6px] mt-[8px] first:mt-0 cursor-pointer ',
@@ -43,7 +43,7 @@ const RecordList: FC<ListProps> = ({
             </Typography.Text>
             <p
               className={clsx(
-                selectedId === item.record_id ? 'fg-primary' : 'fg-tertiary',
+                selectedId === item.id.id.String ? 'fg-primary' : 'fg-tertiary',
                 'text-[14px] mt-[4px]',
               )}
             >

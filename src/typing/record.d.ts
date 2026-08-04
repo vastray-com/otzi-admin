@@ -15,7 +15,7 @@ declare namespace Record {
     };
     record_id: string;
     tags: string[];
-    recording_file: string | null;
+    recording_file: string[] | null;
     recording_transcribe: string | null;
     sentences: {
       begin_time: number;
