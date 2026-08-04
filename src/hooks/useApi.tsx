@@ -8,6 +8,10 @@ export const useApi = () => {
         service.post('/note/list', params) as Promise<
           APIRes<PaginationData<Record.Item>>
         >,
+      exportRecordZip: (params: Record.ExportParams) =>
+        service.post('/note/export', params, {
+          responseType: 'blob',
+        }) as Promise<Blob>,
       getNoteStats: (params: NoteStats.GetListParams) =>
         service.get('/note/stats', { params }) as Promise<
           APIRes<NoteStats.List>

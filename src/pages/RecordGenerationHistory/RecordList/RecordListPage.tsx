@@ -1,4 +1,5 @@
 import {
+  App,
   Button,
   Card,
   DatePicker,
@@ -7,6 +8,7 @@ import {
   type FormProps,
   type GetProps,
   Input,
+  Modal,
   Tabs,
 } from 'antd';
 import dayjs, { type Dayjs } from 'dayjs';
@@ -18,6 +20,9 @@ import { RecordListPageCom } from '@/pages/RecordGenerationHistory/RecordList/co
 type Filter = {
   record_id?: string | null;
   range?: [Dayjs, Dayjs] | null;
+};
+type ExportFilter = {
+  range?: [Dayjs, Dayjs];
 };
 const initialFilter: Filter = {
   record_id: null,
@@ -60,9 +65,11 @@ const withConfiguredHost = (path?: string | null) => {
 };
 
 const RecordListPage = () => {
+  const { message } = App.useApp();
   const { recordApi } = useApi();
 
   const isInitial = useRef(true);
+  const [exportForm] = Form.useForm<ExportFilter>();
 
   const [pagination, setPagination] =
     useState<PaginationParams>(initialPagination);
@@ -71,6 +78,8 @@ const RecordListPage = () => {
   const [data, setData] = useState<Record.List>([]);
   const [current, setCurrent] = useState<Record.Item | null>(null);
   const [activeKey, setActiveKey] = useState<string>('result');
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const firstRecordingFile = withConfiguredHost(
     current?.recording_file?.[0] ?? null,
   );
@@ -182,6 +191,36 @@ const RecordListPage = () => {
       return current > todayEnd || current < todayEnd.add(-12, 'month');
     };
 
+  const onExport = useCallback(async () => {
+    const values = await exportForm.validateFields();
+    if (values.range?.length !== 2) return;
+
+    setIsExporting(true);
+    try {
+      const blob = await recordApi.exportRecordZip({
+        start_date: values.range[0].startOf('day').toISOString(),
+        end_date: values.range[1].endOf('day').toISOString(),
+      });
+
+      const downloadUrl = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = downloadUrl;
+      anchor.download = `病历录音_${dayjs().format('YYYYMMDD_HHmmss')}.zip`;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      URL.revokeObjectURL(downloadUrl);
+
+      setIsExportModalOpen(false);
+      exportForm.resetFields();
+      message.success('导出成功');
+    } catch {
+      message.error('导出失败，请稍后再试');
+    } finally {
+      setIsExporting(false);
+    }
+  }, [exportForm, message, recordApi]);
+
   // 如果是第一次加载，返回 null，避免重复渲染
   if (isInitial.current) {
     fetchList(pagination);
@@ -190,7 +229,12 @@ const RecordListPage = () => {
   }
 
   return (
-    <ContentLayout title="病历记录">
+    <ContentLayout
+      title="病历记录"
+      action={
+        <Button onClick={() => setIsExportModalOpen(true)}>导出病历</Button>
+      }
+    >
       <Card className="h-[80px]">
         <Form<Filter>
           layout="inline"
@@ -208,7 +252,7 @@ const RecordListPage = () => {
             </Form.Item>
           </div>
 
-          <div>
+          <div className="flex items-center gap-x-[8px]">
             <Form.Item noStyle>
               <Button type="primary" htmlType="submit">
                 查询
@@ -289,6 +333,36 @@ const RecordListPage = () => {
           />
         </div>
       </div>
+      <Modal
+        title="导出病历和录音"
+        centered
+        open={isExportModalOpen}
+        onCancel={() => {
+          setIsExportModalOpen(false);
+          exportForm.resetFields();
+        }}
+        onOk={() => {
+          void onExport();
+        }}
+        okText="导出"
+        cancelText="取消"
+        confirmLoading={isExporting}
+        destroyOnHidden
+      >
+        <Form<ExportFilter> layout="vertical" form={exportForm}>
+          <Form.Item
+            label="起止时间"
+            name="range"
+            rules={[{ required: true, message: '请选择起止时间' }]}
+          >
+            <DatePicker.RangePicker
+              className="w-full"
+              showTime
+              disabledDate={disabledDate}
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
     </ContentLayout>
   );
 };

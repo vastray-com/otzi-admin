@@ -5,6 +5,10 @@ declare namespace Record {
     end_date?: string;
   };
   type GetListParams = PaginationParams & ListFilter;
+  type ExportParams = {
+    start_date: string;
+    end_date: string;
+  };
 
   type Item = {
     id: {
