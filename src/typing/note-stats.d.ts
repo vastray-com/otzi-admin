@@ -1,25 +1,58 @@
 declare namespace NoteStats {
-  type GetListParams = {
+  type GetDashboardParams = {
     start_date?: string;
     end_date?: string;
+    doctorId?: string;
+    clinic?: string;
+    departmentId?: string;
   };
 
-  type Thing = {
-    tb: string;
-    id: {
-      String: string;
-    };
-  };
-
-  type Item = {
-    id?: Thing;
-    stat_date: string;
+  type Overview = {
     note_count: number;
     total_recording_duration_ms: number;
     avg_recording_duration_ms: number;
-    created_at?: string;
-    updated_at?: string;
+    doctor_count: number;
+    department_count: number;
+    patient_count: number;
   };
 
-  type List = Item[];
+  type TrendItem = {
+    stat_date: string;
+    note_count: number;
+    doctor_count: number;
+    department_count: number;
+    total_recording_duration_ms: number;
+    avg_recording_duration_ms: number;
+  };
+
+  type BucketItem = {
+    name: string;
+    count: number;
+    total_recording_duration_ms: number;
+    avg_recording_duration_ms: number;
+  };
+
+  type SelectorOption = {
+    id?: string;
+    name?: string;
+    label?: string;
+    value?: string;
+  };
+
+  type DashboardSelectors = {
+    doctors: SelectorOption[];
+    clinics: SelectorOption[];
+    departments: SelectorOption[];
+  };
+
+  type Dashboard = {
+    overview: Overview;
+    daily_trend: TrendItem[];
+    by_doctor: BucketItem[];
+    by_clinic: BucketItem[];
+    by_department: BucketItem[];
+    by_patient_gender: BucketItem[];
+    by_patient_age_bucket: BucketItem[];
+    selectors: DashboardSelectors;
+  };
 }

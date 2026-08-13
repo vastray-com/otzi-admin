@@ -12,9 +12,9 @@ export const useApi = () => {
         service.post('/note/export', params, {
           responseType: 'blob',
         }) as Promise<Blob>,
-      getNoteStats: (params: NoteStats.GetListParams) =>
-        service.get('/note/stats', { params }) as Promise<
-          APIRes<NoteStats.List>
+      getNoteDashboardStats: (params: NoteStats.GetDashboardParams) =>
+        service.get('/note/stats/dashboard', { params }) as Promise<
+          APIRes<NoteStats.Dashboard>
         >,
     }),
     [],
