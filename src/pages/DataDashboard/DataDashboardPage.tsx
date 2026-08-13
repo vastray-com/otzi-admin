@@ -171,7 +171,7 @@ const OverviewStatCard = ({
           borderWidth: 1.25,
           backgroundColor: cardBgColor,
         }}
-        bodyStyle={{ padding: 14 }}
+        styles={{ body: { padding: 14 } }}
       >
         <div className="flex items-center justify-between">
           <Statistic
@@ -213,7 +213,7 @@ const OverviewDurationCard = ({
           borderWidth: 1.25,
           backgroundColor: cardBgColor,
         }}
-        bodyStyle={{ padding: 14 }}
+        styles={{ body: { padding: 14 } }}
       >
         <div className="flex items-start justify-between">
           <div>
