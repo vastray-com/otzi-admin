@@ -16,6 +16,10 @@ export const useApi = () => {
         service.get('/note/stats/dashboard', { params }) as Promise<
           APIRes<NoteStats.Dashboard>
         >,
+      exportNoteDashboardStatsZip: (params: NoteStats.ExportParams) =>
+        service.post('/note/stats/export', params, {
+          responseType: 'blob',
+        }) as Promise<Blob>,
     }),
     [],
   );

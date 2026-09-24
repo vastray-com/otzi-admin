@@ -389,6 +389,7 @@ const DataDashboardPage = () => {
   const { recordApi } = useApi();
   const [form] = Form.useForm<FilterValues>();
   const [loading, setLoading] = useState(false);
+  const [exporting, setExporting] = useState(false);
   const [stats, setStats] = useState<NoteStats.Dashboard>(emptyDashboard);
   const [bucketMetrics, setBucketMetrics] = useState<
     Record<BucketChartKey, BucketMetric>
@@ -440,6 +441,27 @@ const DataDashboardPage = () => {
       message.error('获取看板统计失败，请稍后再试');
     });
   }, [defaultRange, fetchStats, form, message]);
+
+  const onExport = useCallback(async () => {
+    const params = toQueryParams(form.getFieldsValue());
+    setExporting(true);
+    try {
+      const blob = await recordApi.exportNoteDashboardStatsZip(params);
+      const downloadUrl = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = downloadUrl;
+      anchor.download = `数据看板_${dayjs().format('YYYYMMDD_HHmmss')}.zip`;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      URL.revokeObjectURL(downloadUrl);
+      message.success('导出成功');
+    } catch {
+      message.error('导出失败，请稍后再试');
+    } finally {
+      setExporting(false);
+    }
+  }, [form, message, recordApi]);
 
   const disabledDate: GetProps<typeof DatePicker.RangePicker>['disabledDate'] =
     (current) => {
@@ -566,6 +588,9 @@ const DataDashboardPage = () => {
             <Button onClick={resetFilters}>重置</Button>
             <Button type="primary" htmlType="submit" loading={loading}>
               查询
+            </Button>
+            <Button onClick={() => void onExport()} loading={exporting}>
+              导出
             </Button>
           </div>
         </Form>

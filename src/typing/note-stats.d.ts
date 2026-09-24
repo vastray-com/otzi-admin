@@ -7,6 +7,8 @@ declare namespace NoteStats {
     departmentId?: string;
   };
 
+  type ExportParams = GetDashboardParams;
+
   type Overview = {
     note_count: number;
     total_recording_duration_ms: number;
